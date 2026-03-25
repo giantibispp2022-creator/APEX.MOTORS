@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX Motors — Find Your Dream Car</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f3ee;
+    --cream: #f0ece3;
+    --red: #c8331b;
+    --red-dark: #a02916;
+    --gray: #2a2a2a;
+    --gray-mid: #555;
+    --gray-light: #999;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ───────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4rem;
+    height: 72px;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    transition: background .3s;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: .12em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    font-size: .85rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gray-light);
+    position: relative;
+    transition: color .25s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--red);
+    transition: width .3s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--red);
+    color: var(--white) !important;
+    padding: .55rem 1.4rem;
+    border-radius: 2px;
+    font-size: .8rem !important;
+    letter-spacing: .12em;
+    transition: background .25s !important;
+  }
+  .nav-cta:hover { background: var(--red-dark) !important; }
+  .nav-cta::after { display: none !important; }
+
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: .3s; }
+
+  /* ── HERO SLIDER ─────────────────────────────── */
+  .hero {
+    position: relative; height: 100vh; overflow: hidden;
+    margin-top: 0;
+  }
+  .slides-track { display: flex; height: 100%; transition: transform .8s cubic-bezier(.77,0,.18,1); }
+  .slide {
+    min-width: 100%; height: 100%;
+    position: relative;
+    background-size: cover; background-position: center;
+  }
+  .slide::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(105deg, rgba(0,0,0,.75) 40%, rgba(0,0,0,.2));
+  }
+  .slide-1 { background-image: url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1800&q=80'); }
+  .slide-2 { background-image: url('https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1800&q=80'); }
+  .slide-3 { background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1800&q=80'); }
+
+  .slide-content {
+    position: absolute; bottom: 0; left: 0;
+    padding: 6rem 6rem 5rem;
+    max-width: 700px;
+  }
+  .slide-eyebrow {
+    font-size: .75rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .6s .2s forwards;
+  }
+  .slide-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: .95;
+    letter-spacing: .02em;
+    margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(30px);
+    animation: fadeUp .7s .35s forwards;
+  }
+  .slide-sub {
+    font-size: 1rem;
+    color: rgba(245,243,238,.7);
+    max-width: 420px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .6s .5s forwards;
+  }
+  .btn {
+    display: inline-block;
+    font-size: .8rem; font-weight: 600;
+    letter-spacing: .15em; text-transform: uppercase;
+    text-decoration: none;
+    padding: 1rem 2.5rem;
+    border: none; cursor: pointer;
+    transition: all .25s;
+  }
+  .btn-primary {
+    background: var(--red); color: var(--white);
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .6s .65s forwards;
+  }
+  .btn-primary:hover { background: var(--red-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,51,27,.4); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,.4);
+  }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.15);
+    color: var(--white);
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.2rem;
+    transition: background .25s, border-color .25s;
+    backdrop-filter: blur(8px);
+  }
+  .hero-arrow:hover { background: var(--red); border-color: var(--red); }
+  .arrow-left { left: 2rem; }
+  .arrow-right { right: 2rem; }
+
+  .hero-dots {
+    position: absolute; bottom: 2.5rem; right: 6rem;
+    display: flex; gap: .6rem;
+  }
+  .dot {
+    width: 28px; height: 2px;
+    background: rgba(255,255,255,.3);
+    cursor: pointer; transition: background .3s, width .3s;
+  }
+  .dot.active { background: var(--red); width: 48px; }
+
+  /* ── SECTION COMMONS ─────────────────────────── */
+  section { padding: 7rem 6rem; }
+  .section-label {
+    font-size: .72rem; letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    letter-spacing: .04em;
+    line-height: 1;
+  }
+  .section-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--red);
+  }
+
+  /* ── CATEGORIES ──────────────────────────────── */
+  .categories { background: var(--black); padding-bottom: 5rem; }
+  .cat-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+  .cat-carousel-wrap { position: relative; overflow: hidden; }
+  .cat-carousel {
+    display: flex; gap: 1.5rem;
+    transition: transform .6s cubic-bezier(.77,0,.18,1);
+  }
+  .cat-card {
+    min-width: 280px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .cat-card img {
+    width: 100%; height: 340px;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s cubic-bezier(.23,1,.32,1);
+    filter: brightness(.7);
+  }
+  .cat-card:hover img { transform: scale(1.06); filter: brightness(.5); }
+  .cat-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.8rem;
+    background: linear-gradient(to top, rgba(0,0,0,.8) 0%, transparent 60%);
+  }
+  .cat-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: .08em;
+  }
+  .cat-count { font-size: .78rem; color: var(--gray-light); margin-top: .2rem; }
+  .cat-arrow-btn {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    color: var(--white);
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .2s;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 5;
+  }
+  .cat-arrow-btn:hover { background: var(--red); border-color: var(--red); }
+  .cat-prev { left: -20px; }
+  .cat-next { right: -20px; }
+
+  /* ── ABOUT ───────────────────────────────────── */
+  .about {
+    background: #111;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6rem; align-items: center;
+  }
+  .about-img-wrap {
+    position: relative;
+  }
+  .about-img-wrap img {
+    width: 100%; height: 580px;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%);
+  }
+  .about-img-accent {
+    position: absolute;
+    bottom: -2rem; right: -2rem;
+    width: 200px; height: 200px;
+    border: 3px solid var(--red);
+    z-index: -1;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2rem; margin-top: 3rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; color: var(--red);
+    line-height: 1;
+  }
+  .stat-label { font-size: .8rem; color: var(--gray-light); margin-top: .3rem; text-transform: uppercase; letter-spacing: .1em; }
+  .about-text p {
+    color: rgba(245,243,238,.65);
+    line-height: 1.8;
+    font-size: .95rem;
+    margin-top: 1.5rem;
+  }
+
+  /* ── SHOP ────────────────────────────────────── */
+  .shop { background: var(--black); }
+  .shop-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; }
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .car-card {
+    background: #141414;
+    border: 1px solid rgba(255,255,255,.05);
+    transition: transform .35s, border-color .35s, box-shadow .35s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .car-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--red);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .35s;
+  }
+  .car-card:hover { transform: translateY(-6px); border-color: rgba(200,51,27,.3); box-shadow: 0 16px 48px rgba(0,0,0,.5); }
+  .car-card:hover::before { transform: scaleX(1); }
+  .car-img {
+    width: 100%; height: 220px;
+    object-fit: cover; display: block;
+    transition: transform .5s;
+  }
+  .car-card:hover .car-img { transform: scale(1.04); }
+  .car-badge {
+    position: absolute; top: 1rem; left: 1rem;
+    background: var(--red);
+    font-size: .65rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    padding: .3rem .7rem;
+    color: var(--white);
+  }
+  .car-info { padding: 1.5rem; }
+  .car-name { font-weight: 600; font-size: 1rem; }
+  .car-specs { font-size: .78rem; color: var(--gray-light); margin-top: .4rem; }
+  .car-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .car-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--red); letter-spacing: .04em; }
+  .car-buy {
+    font-size: .72rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase;
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,.2);
+    padding: .6rem 1.2rem;
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .car-buy:hover { background: var(--red); border-color: var(--red); }
+
+  /* ── CONTACT ─────────────────────────────────── */
+  .contact {
+    background: #0e0e0e;
+    display: grid; grid-template-columns: 1fr 1.2fr;
+    gap: 6rem; align-items: start;
+  }
+  .contact-info-item {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    margin-top: 2.5rem;
+  }
+  .contact-icon {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: rgba(200,51,27,.12);
+    border: 1px solid rgba(200,51,27,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .contact-info-label { font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gray-light); }
+  .contact-info-val { font-size: .95rem; margin-top: .3rem; color: var(--white); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .form-group { display: flex; flex-direction: column; gap: .5rem; }
+  .form-group label { font-size: .72rem; letter-spacing: .15em; text-transform: uppercase; color: var(--gray-light); }
+  .form-group input,
+  .form-group textarea {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--white);
+    padding: .9rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .25s;
+    resize: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus { border-color: var(--red); }
+  .form-group textarea { height: 140px; }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  footer {
+    background: #050505;
+    padding: 5rem 6rem 2rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 4rem;
+    margin-bottom: 4rem;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    letter-spacing: .1em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .footer-logo span { color: var(--red); }
+  .footer-desc {
+    font-size: .85rem;
+    color: var(--gray-light);
+    line-height: 1.8;
+    margin-top: 1rem;
+  }
+  .footer-col-title {
+    font-size: .72rem; letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: .8rem; }
+  .footer-links a {
+    text-decoration: none; font-size: .85rem;
+    color: var(--gray-light);
+    transition: color .2s;
+  }
+  .footer-links a:hover { color: var(--red); }
+  .footer-socials { display: flex; gap: .8rem; margin-top: 1.5rem; }
+  .social-btn {
+    width: 38px; height: 38px;
+    border: 1px solid rgba(255,255,255,.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; cursor: pointer;
+    transition: background .2s, border-color .2s;
+    text-decoration: none; color: var(--gray-light);
+  }
+  .social-btn:hover { background: var(--red); border-color: var(--red); color: var(--white); }
+  .footer-bottom {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,.06);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: .78rem; color: var(--gray-light);
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 1100px) {
+    nav { padding: 0 2.5rem; }
+    section { padding: 5rem 3rem; }
+    .about, .contact { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 3rem; }
+    .about-img-accent { display: none; }
+    .shop-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 3rem; }
+    .slide-content { padding: 4rem 3rem; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 0 1.5rem; }
+    .nav-links { display: none; flex-direction: column; position: fixed; top: 72px; left: 0; right: 0; background: #0a0a0a; padding: 2rem 1.5rem; gap: 1.5rem; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    section { padding: 4rem 1.5rem; }
+    .shop-grid { grid-template-columns: 1fr; }
+    .about, .contact { padding: 4rem 1.5rem; }
+    footer { padding: 4rem 1.5rem 2rem; }
+    .footer-top { grid-template-columns: 1fr; gap: 2.5rem; }
+    .cat-card { min-width: 230px; }
+    .cat-card img { height: 260px; }
+    .slide-content { padding: 3rem 1.5rem; }
+    .hero-dots { right: 1.5rem; bottom: 1.5rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: .8rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">APEX<span>.</span>Motors</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#categories">Models</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#shop">Shop</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#shop" class="nav-cta">Shop Now</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══ HERO ═══════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="slides-track" id="slidesTrack">
+    <div class="slide slide-1">
+      <div class="slide-content">
+        <p class="slide-eyebrow">New Arrivals 2025</p>
+        <h1 class="slide-title">Find Your<br>Dream Car</h1>
+        <p class="slide-sub">Explore an exclusive collection of premium vehicles — meticulously curated for those who demand more than just transportation.</p>
+        <a href="#shop" class="btn btn-primary">Shop Now</a>
+      </div>
+    </div>
+    <div class="slide slide-2">
+      <div class="slide-content">
+        <p class="slide-eyebrow">Luxury Performance</p>
+        <h1 class="slide-title">Drive the<br>Future Today</h1>
+        <p class="slide-sub">From electric sedans to performance SUVs — every car in our showroom is engineered to perfection.</p>
+        <a href="#shop" class="btn btn-primary">Shop Now</a>
+      </div>
+    </div>
+    <div class="slide slide-3">
+      <div class="slide-content">
+        <p class="slide-eyebrow">Unmatched Value</p>
+        <h1 class="slide-title">Own the<br>Road Ahead</h1>
+        <p class="slide-sub">Transparent pricing, expert guidance, and world-class after-sale support. Your journey starts here.</p>
+        <a href="#shop" class="btn btn-primary">Shop Now</a>
+      </div>
+    </div>
+  </div>
+  <button class="hero-arrow arrow-left" id="heroPrev">&#8592;</button>
+  <button class="hero-arrow arrow-right" id="heroNext">&#8594;</button>
+  <div class="hero-dots" id="heroDots">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+  </div>
+</section>
+
+<!-- ══ CATEGORIES ══════════════════════════════════ -->
+<section class="categories" id="categories">
+  <div class="cat-header">
+    <div>
+      <p class="section-label">Browse by Type</p>
+      <h2 class="section-title">Explore <em>Categories</em></h2>
+    </div>
+    <a href="#shop" class="btn btn-outline" style="font-size:.78rem;padding:.8rem 2rem;">View All →</a>
+  </div>
+  <div class="cat-carousel-wrap">
+    <button class="cat-arrow-btn cat-prev" id="catPrev">&#8592;</button>
+    <div class="cat-carousel" id="catCarousel">
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&q=80" alt="SUV">
+        <div class="cat-overlay">
+          <div class="cat-name">SUV</div>
+          <div class="cat-count">24 Models Available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1617469767185-9af77b3db61a?w=600&q=80" alt="Sedan">
+        <div class="cat-overlay">
+          <div class="cat-name">Sedan</div>
+          <div class="cat-count">18 Models Available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Sports">
+        <div class="cat-overlay">
+          <div class="cat-name">Sports</div>
+          <div class="cat-count">12 Models Available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1571127236794-81c8c1d99b3f?w=600&q=80" alt="Electric">
+        <div class="cat-overlay">
+          <div class="cat-name">Electric</div>
+          <div class="cat-count">9 Models Available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600&q=80" alt="Truck">
+        <div class="cat-overlay">
+          <div class="cat-name">Truck</div>
+          <div class="cat-count">15 Models Available</div>
+        </div>
+      </div>
+      <div class="cat-card">
+        <img src="https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?w=600&q=80" alt="Coupe">
+        <div class="cat-overlay">
+          <div class="cat-name">Coupe</div>
+          <div class="cat-count">8 Models Available</div>
+        </div>
+      </div>
+    </div>
+    <button class="cat-arrow-btn cat-next" id="catNext">&#8594;</button>
+  </div>
+</section>
+
+<!-- ══ ABOUT ═══════════════════════════════════════ -->
+<section class="about" id="about">
+  <div class="about-img-wrap">
+    <img src="https://images.unsplash.com/photo-1567818735868-e71b99932e29?w=900&q=80" alt="Showroom">
+    <div class="about-img-accent"></div>
+  </div>
+  <div class="about-text">
+    <p class="section-label">Our Story</p>
+    <h2 class="section-title">Built on <em>Passion</em><br>Driven by Trust</h2>
+    <p>Since 2001, APEX Motors has been the benchmark for automotive excellence. We believe buying a car should be an experience — not a transaction. Our curated showroom houses only the finest vehicles, hand-selected for quality, performance, and value.</p>
+    <p>Every client is paired with a dedicated specialist who guides them through the entire journey — from discovery to delivery. We don't just sell cars. We help you find the one that fits your life.</p>
+    <div class="about-stats">
+      <div>
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Years in Business</div>
+      </div>
+      <div>
+        <div class="stat-num">4.8K</div>
+        <div class="stat-label">Happy Clients</div>
+      </div>
+      <div>
+        <div class="stat-num">86</div>
+        <div class="stat-label">Cars in Stock</div>
+      </div>
+      <div>
+        <div class="stat-num">12</div>
+        <div class="stat-label">Brand Partners</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SHOP ════════════════════════════════════════ -->
+<section class="shop" id="shop">
+  <div class="shop-header">
+    <div>
+      <p class="section-label">Featured Vehicles</p>
+      <h2 class="section-title">Handpicked <em>Deals</em></h2>
+    </div>
+    <a href="#" class="btn btn-outline" style="font-size:.78rem;padding:.8rem 2rem;">View All →</a>
+  </div>
+  <div class="shop-grid">
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80" alt="BMW M5">
+      <span class="car-badge">New</span>
+      <div class="car-info">
+        <div class="car-name">BMW M5 Competition</div>
+        <div class="car-specs">2025 · 617 HP · 0–60 in 3.1s · Automatic</div>
+        <div class="car-footer">
+          <div class="car-price">$112,900</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1502877338535-766e1452684a?w=800&q=80" alt="Porsche">
+      <span class="car-badge">Hot</span>
+      <div class="car-info">
+        <div class="car-name">Porsche 911 Carrera S</div>
+        <div class="car-specs">2025 · 443 HP · 0–60 in 3.5s · PDK</div>
+        <div class="car-footer">
+          <div class="car-price">$138,200</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1571127236794-81c8c1d99b3f?w=800&q=80" alt="Tesla">
+      <span class="car-badge">Electric</span>
+      <div class="car-info">
+        <div class="car-name">Tesla Model S Plaid</div>
+        <div class="car-specs">2025 · 1,020 HP · 0–60 in 1.99s · AWD</div>
+        <div class="car-footer">
+          <div class="car-price">$89,990</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1536700503279-b9ead02e73b4?w=800&q=80" alt="Range Rover">
+      <div class="car-info">
+        <div class="car-name">Range Rover Sport HSE</div>
+        <div class="car-specs">2025 · 395 HP · AWD · 8-Speed Auto</div>
+        <div class="car-footer">
+          <div class="car-price">$97,500</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?w=800&q=80" alt="Audi">
+      <span class="car-badge">Sale</span>
+      <div class="car-info">
+        <div class="car-name">Audi RS e-tron GT</div>
+        <div class="car-specs">2024 · 637 HP · 0–60 in 3.1s · EV</div>
+        <div class="car-footer">
+          <div class="car-price">$104,000</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+    <div class="car-card">
+      <img class="car-img" src="https://images.unsplash.com/photo-1563720223523-3d4e3fc9ae8e?w=800&q=80" alt="Mercedes">
+      <div class="car-info">
+        <div class="car-name">Mercedes AMG GT 63</div>
+        <div class="car-specs">2025 · 630 HP · 0–60 in 3.1s · MCT</div>
+        <div class="car-footer">
+          <div class="car-price">$162,000</div>
+          <button class="car-buy">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══════════════════════════════════════ -->
+<section class="contact" id="contact">
+  <div>
+    <p class="section-label">Get in Touch</p>
+    <h2 class="section-title">Let's Talk <em>Cars</em></h2>
+    <div class="contact-info-item">
+      <div class="contact-icon">📍</div>
+      <div>
+        <div class="contact-info-label">Showroom</div>
+        <div class="contact-info-val">2847 Motorsport Blvd, Los Angeles, CA 90001</div>
+      </div>
+    </div>
+    <div class="contact-info-item">
+      <div class="contact-icon">📞</div>
+      <div>
+        <div class="contact-info-label">Phone</div>
+        <div class="contact-info-val">+1 (800) 273-APEX</div>
+      </div>
+    </div>
+    <div class="contact-info-item">
+      <div class="contact-icon">✉️</div>
+      <div>
+        <div class="contact-info-label">Email</div>
+        <div class="contact-info-val">hello@apexmotors.com</div>
+      </div>
+    </div>
+    <div class="contact-info-item">
+      <div class="contact-icon">🕐</div>
+      <div>
+        <div class="contact-info-label">Hours</div>
+        <div class="contact-info-val">Mon–Sat: 9AM–7PM &nbsp;|&nbsp; Sun: 11AM–5PM</div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="John">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Doe">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" placeholder="john@example.com">
+    </div>
+    <div class="form-group">
+      <label>Phone (optional)</label>
+      <input type="tel" placeholder="+1 (555) 000-0000">
+    </div>
+    <div class="form-group">
+      <label>Message</label>
+      <textarea placeholder="Tell us which model you're interested in..."></textarea>
+    </div>
+    <button class="btn btn-primary" style="align-self:flex-start" onclick="handleFormSubmit(this)">Send Message →</button>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══════════════════════════════════════ -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <a href="#home" class="footer-logo">APEX<span>.</span>Motors</a>
+      <p class="footer-desc">Premium automotive dealership delivering world-class vehicles since 2001. Find your perfect match — from electric pioneers to legendary performance machines.</p>
+      <div class="footer-socials">
+        <a class="social-btn" href="#" aria-label="Instagram">𝕀</a>
+        <a class="social-btn" href="#" aria-label="X">𝕏</a>
+        <a class="social-btn" href="#" aria-label="Facebook">𝔽</a>
+        <a class="social-btn" href="#" aria-label="YouTube">▶</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <ul class="footer-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#categories">Models</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Categories</div>
+      <ul class="footer-links">
+        <li><a href="#">SUVs</a></li>
+        <li><a href="#">Sedans</a></li>
+        <li><a href="#">Sports Cars</a></li>
+        <li><a href="#">Electric</a></li>
+        <li><a href="#">Trucks</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Ready to Drive?</div>
+      <p style="font-size:.85rem;color:var(--gray-light);line-height:1.7;margin-bottom:1.5rem;">Visit our showroom or book a test drive online. Our experts are ready to assist you.</p>
+      <a href="#shop" class="btn btn-primary" style="font-size:.78rem;padding:.85rem 2rem;">Shop Now →</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 APEX Motors. All rights reserved.</span>
+    <span>Privacy Policy · Terms of Service</span>
+  </div>
+</footer>
+
+<!-- ══ JS ══════════════════════════════════════════ -->
+<script>
+  /* ── Hero Slider ─────────────────────────────── */
+  let currentSlide = 0;
+  const totalSlides = 3;
+  const track = document.getElementById('slidesTrack');
+  const dots = document.querySelectorAll('.dot');
+
+  function goToSlide(n) {
+    currentSlide = (n + totalSlides) % totalSlides;
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    // Reset slide content animation
+    const contents = document.querySelectorAll('.slide-content > *');
+    contents.forEach(el => { el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; });
+  }
+
+  document.getElementById('heroNext').addEventListener('click', () => goToSlide(currentSlide + 1));
+  document.getElementById('heroPrev').addEventListener('click', () => goToSlide(currentSlide - 1));
+
+  let heroInterval = setInterval(() => goToSlide(currentSlide + 1), 4000);
+  document.querySelector('.hero').addEventListener('mouseenter', () => clearInterval(heroInterval));
+  document.querySelector('.hero').addEventListener('mouseleave', () => {
+    heroInterval = setInterval(() => goToSlide(currentSlide + 1), 4000);
+  });
+
+  /* ── Category Carousel ───────────────────────── */
+  let catIndex = 0;
+  const catCarousel = document.getElementById('catCarousel');
+  const catCardWidth = 280 + 24; // width + gap
+
+  function slideCat(dir) {
+    const maxIndex = 6 - Math.floor(catCarousel.parentElement.offsetWidth / catCardWidth);
+    catIndex = Math.max(0, Math.min(catIndex + dir, maxIndex));
+    catCarousel.style.transform = `translateX(-${catIndex * catCardWidth}px)`;
+  }
+
+  document.getElementById('catNext').addEventListener('click', () => slideCat(1));
+  document.getElementById('catPrev').addEventListener('click', () => slideCat(-1));
+
+  let catAutoInterval = setInterval(() => {
+    const maxIndex = 6 - Math.floor(catCarousel.parentElement.offsetWidth / catCardWidth);
+    if (catIndex >= maxIndex) catIndex = -1;
+    slideCat(1);
+  }, 3000);
+
+  /* ── Hamburger ───────────────────────────────── */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  /* ── Sticky Nav Style ────────────────────────── */
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.background =
+      window.scrollY > 60 ? 'rgba(10,10,10,.97)' : 'rgba(10,10,10,.85)';
+  });
+
+  /* ── Form Submit ─────────────────────────────── */
+  function handleFormSubmit(btn) {
+    btn.textContent = 'Sending…';
+    btn.style.opacity = '.6';
+    setTimeout(() => {
+      btn.textContent = '✓ Message Sent!';
+      btn.style.opacity = '1';
+      btn.style.background = '#1a7a3c';
+    }, 1500);
+  }
+
+  /* ── Intersection Observer: fade-in cards ────── */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.car-card, .cat-card, .contact-info-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
